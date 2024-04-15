@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model package="excelraschet" baseClass="xPDOObject" platform="mysql" defaultEngine="InnoDB" phpdoc-package="excelraschet"
+       version="1.1">
+    <object class="ExcelRaschetItem" table="excelraschet_items" extends="xPDOSimpleObject">
+        <field key="name" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="action" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="desc" dbtype="text" phptype="string" null="true" default=""/>
+        <field key="desc2" dbtype="text" phptype="string" null="true" default=""/>
+    </object>
+</model>
