@@ -1,7 +1,7 @@
 export default {
     name:"ExcelRaschet",
     name_lower:"excelraschet",
-    version:"1.0.4", 
+    version:"1.0.6", 
     release:"beta",
     schema:false,
     update:{

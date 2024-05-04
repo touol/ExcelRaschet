@@ -15,7 +15,7 @@
     "axios": "^1.6.2",
     "primeicons": "^6.0.1",
     "primevue": "^3.45.0",
-    "vue": "^3.3.11"
+    "vue": "^3.4.21"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.5.2",
