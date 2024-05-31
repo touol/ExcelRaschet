@@ -2,7 +2,8 @@ import { defineConfig , loadEnv} from 'vite'
 import vue from '@vitejs/plugin-vue'
 import {parse, resolve} from 'path'
 import { fileURLToPath } from 'url'
-import external_packages from './external_packages.json' with { "type": "json" }
+import external_packages from './_build/external_packages.json' with { "type": "json" }
+import external_pvtables from './node_modules/pvtables/build/external_pvtables.json' with { "type": "json" }
 
 // https://vitejs.dev/config/
 export default defineConfig(async ({mode})=>{
@@ -28,7 +29,7 @@ export default defineConfig(async ({mode})=>{
             cssCodeSplit: true,
             outDir: process.env.VITE_APP_OUTPUT_DIR,
             rollupOptions: {
-                external: ['vue','primevue', ...external_packages],
+                external: ['vue','primevue', ...external_packages, ...external_pvtables],
                 // plugins: [ {
                 //     name: 'replace-importer', 
                 //     renderChunk(code) {

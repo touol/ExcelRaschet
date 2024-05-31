@@ -8,22 +8,11 @@
 </template>
 
 <script setup>
-  // import {gtsAutoComplete} from './components/gtsAutoComplete.vue'
-  import {PVTables} from 'pvtables'
-  import { ref } from 'vue';
-  import { useToast } from "primevue/usetoast";
 
-  
-  // const data = ref({
-  //   id:2,
-  //   content:"test"
-  // })
-  
-  const toast = useToast();
-  const message = (mess)=>{
-    // console.log('mess',mess)
-    toast.add(mess)
-  }
+  import {PVTables} from 'pvtables/pvtables'
+  import { ref } from 'vue';
+  import Toast from 'primevue/toast';
+
   const childComponentRef = ref()
   
   const actions = ref({
