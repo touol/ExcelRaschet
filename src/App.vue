@@ -1,8 +1,8 @@
 
 <template>
-  <PVTables table="tSkladNaryadSmena" :actions="actions" 
-  ref="childComponentRef"
-  v-on:message="message"
+  <PVTables table="sraschet" 
+    :actions="actions" 
+    ref="childComponentRef"
   />
   <Toast/>
 </template>
@@ -27,6 +27,7 @@
     //   }
     // }
   })
+  
 </script>
 <style>
 
