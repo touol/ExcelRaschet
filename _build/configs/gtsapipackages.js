@@ -5,9 +5,9 @@ export default {
             {
                 table:'sraschet',
                 autocomplete_field:'',
-                version:4,
+                version:9,
                 tree: false,
-                authenticated:true,
+                authenticated:false,
                 groups:'',
                 permitions:'',
                 active:true,
@@ -15,6 +15,33 @@ export default {
                     actions:{
                         read:{},
                         update:{},
+                        subtabs:{
+                            test:{
+                                DocOrderLink:{
+                                    title:"Документы",
+                                    table:"DocOrderLink",
+                                    where: {
+                                        "type_order_id": 1,
+                                        "order_id":"id"
+                                    }
+                                },
+                                OrgsContact:{
+                                    title:"Контакты",
+                                    table:"OrgsContact",
+                                    where: {
+                                        "OrgsContactLink.org_id": "loc_org_id"
+                                    }
+                                },
+                                family:{
+                                    title:"Семья расчетов",
+                                    table:"sraschet",
+                                    where: {
+                                        "family_id": "family_id",
+                                        "last": 0
+                                    }
+                                },
+                            }
+                        },
                     },
                     query:{
                         class:'sraschet',
@@ -27,6 +54,9 @@ export default {
                         sortby:{
                             "sraschet.id": "DESC"
                         }
+                    },
+                    row_setting:{
+                        class:"{switch $status_id}{case 5}canceled{case 4}hit{case 3}outwork{case 1}work{/switch}"
                     },
                     "fields": {
                         "id": {
@@ -154,6 +184,93 @@ export default {
                         },
                         tpl: "{$shortname} {$inn}",
                         limit:0,
+                    }
+                }
+            },
+            {
+                table:'OrgsContact',
+                autocomplete_field:'',
+                version:3,
+                tree: false,
+                authenticated:false,
+                groups:'',
+                permitions:'',
+                active:true,
+                properties: {
+                    actions:{
+                        read:{}
+                    },
+                    query:{
+                        class:'OrgsContact',
+                        leftJoin:{
+                            OrgsContactLink:{
+                                class:"OrgsContactLink",
+                                on:"OrgsContact.id = OrgsContactLink.contact_id"
+                            }
+                        },
+                        select:{
+                            OrgsContact:"*",
+                            OrgsContactLink:"OrgsContactLink.org_id,OrgsContactLink.default"
+                        },
+                        sortby:{
+                            "id": "ASC"
+                        }
+                    },
+                    "fields": {
+                        "id": {
+                            "type": "view",
+                            "class": "OrgsContact"
+                        },
+                        "shortname": {
+                            "label":"Короткое имя",
+                            "type": "text",
+                            "class": "OrgsContact"
+                        },
+                        "phone": {
+                            "label":"Телефон",
+                            "type": "text",
+                            "class": "OrgsContact"
+                        },
+                        "email": {
+                            "type": "Email",
+                            "class": "OrgsContact"
+                        },
+                        "name": {
+                            "label":"ФИО",
+                            "type": "text",
+                            "class": "OrgsContact"
+                        },
+                        "default": {
+                            "label":"По умолчанию",
+                            "type": "boolean",
+                            "class": "OrgsContactLink"
+                        }
+                    }
+                }
+            },
+            {
+                table:'OrgsContract',
+                autocomplete_field:'',
+                version:2,
+                tree: false,
+                authenticated:false,
+                groups:'',
+                permitions:'',
+                active:true,
+                properties: {
+                    actions:{
+                        read:{}
+                    },
+                    autocomplete: {
+                        "select": [
+                            "id",
+                            "name"
+                        ],
+                        "where": {
+                            "name:LIKE": "%query%"
+                        },
+                        "tpl": "{$name}",
+                        "limit": 20
                     }
                 }
             }
