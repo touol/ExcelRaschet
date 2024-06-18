@@ -6,9 +6,9 @@ import PrimeVue from "primevue/config";
 import ToastService from 'primevue/toastservice';
 import localeRu from './ru.json';
 
-// import 'primevue/resources/themes/aura-light-green/theme.css'
-// import 'primeicons/primeicons.css'
-// import 'pvtables/dist/pvtables/style.css'
+import 'primevue/resources/themes/aura-light-green/theme.css'
+import 'primeicons/primeicons.css'
+import 'pvtables/dist/pvtables/style.css'
 
 const app = createApp(App);
 

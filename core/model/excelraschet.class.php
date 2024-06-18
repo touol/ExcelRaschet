@@ -36,7 +36,7 @@ class ExcelRaschet
 
         $this->modx->addPackage('excelraschet', MODX_CORE_PATH . 'components/excelraschet/model/');
         $this->modx->lexicon->load('excelraschet:default');
-        // $this->modx->addPackage('tsklad', MODX_CORE_PATH.'components/tsklad/model/');
+        $this->modx->addPackage('organizations', MODX_CORE_PATH.'components/organizations/model/');
         // $this->modx->addPackage('gtsbalance', MODX_CORE_PATH.'components/gtsbalance/model/');
 
         if ($this->pdo = $this->modx->getService('pdoFetch')) {
@@ -54,20 +54,49 @@ class ExcelRaschet
     }
     public function triggerDocOrderLink(&$params)
     {
-        $this->modx->log(1,"triggerDocOrderLink ". print_r($params,1));
+        // $this->modx->log(1,"triggerDocOrderLink ". print_r($params,1));
         if($params['type'] == 'after' and $params['method'] == 'read'){
             $out = $params['object_old'];
-            $out['test'] = 1;
+            $contract_ids = [];
+            foreach($out['rows'] as $row){
+                if($row['doc_type_id'] == 1) $contract_ids[$row['doc_id']] = $row['doc_id'];
+            }
+            if(!empty($contract_ids)){
+                if($OrgsContracts = $this->getQuery([
+                    'class'=>'OrgsContract',
+                    'where'=>[
+                        'id:IN'=>$contract_ids
+                    ],
+                    'limit'=>0
+                ])){
+                    foreach($out['rows'] as $k=>$row){
+                        if($row['doc_type_id'] == 1){
+                            $out['rows'][$k]['name'] = $OrgsContracts[$row['doc_id']]['name'];
+                            $out['rows'][$k]['date'] = $OrgsContracts[$row['doc_id']]['date_start'];
+                            $out['rows'][$k]['file'] = '';
+                            $out['rows'][$k]['signed'] = $OrgsContracts[$row['doc_id']]['signed'];
+                            $out['rows'][$k]['archived'] = $OrgsContracts[$row['doc_id']]['archived'];
+                            $out['rows'][$k]['in1c'] = '0';
+                        }
+                    }
+                }
+                
+            }
+            // $out['test'] = 1;
         }
         return $this->success('',['out'=>$out]);
+    }
+    public function createAccountIn1c($data = array())
+    {
+        return $this->error("createAccountIn1c!");
     }
     public function handleRequest($action, $data = array())
     {
         $data = $this->modx->sanitize($data, $this->modx->sanitizePatterns);
         switch($action){
-            // case 'export_rule':
-            //     return $this->export_rule($data);
-            // break;
+            case 'createAccountIn1c':
+                return $this->createAccountIn1c($data);
+            break;
             default:
                 return $this->error("Not found action!");
         }
@@ -135,5 +164,19 @@ class ExcelRaschet
             }
         }
         return $placeholders;
+    }
+    public function getQuery($pdoConfig)
+    {
+        $pdoConfig['return'] = 'data';
+        $this->pdo->setConfig($pdoConfig);
+        $rows0 = $this->pdo->run();
+        if(!is_array($rows0) or count($rows0) == 0){
+            return null;
+        }
+        $rows = [];
+        foreach($rows0 as $row){
+            $rows[$row['id']] = $row;
+        }
+        return $rows;
     }
 }

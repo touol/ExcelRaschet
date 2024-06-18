@@ -5,13 +5,14 @@ export default {
             {
                 table:'sraschet',
                 autocomplete_field:'',
-                version:9,
+                version:15,
                 tree: false,
                 authenticated:false,
                 groups:'',
                 permitions:'',
                 active:true,
                 properties: {
+                    loadModels:"ExcelRaschet",
                     actions:{
                         read:{},
                         update:{},
@@ -43,6 +44,9 @@ export default {
                             }
                         },
                     },
+                    hide_actions:{
+                        "ExcelRaschet/createAccountIn1c":{},
+                    },
                     query:{
                         class:'sraschet',
                         where:{
@@ -57,6 +61,16 @@ export default {
                     },
                     row_setting:{
                         class:"{switch $status_id}{case 5}canceled{case 4}hit{case 3}outwork{case 1}work{/switch}"
+                    },
+                    filters:{
+                        period_id:{
+                            label:"Период",
+                            type:"autocomplete",
+                            table:"gtsBPeriod",
+                            default_row:{
+                                active:1
+                            }
+                        }
                     },
                     "fields": {
                         "id": {
@@ -251,7 +265,7 @@ export default {
             {
                 table:'OrgsContract',
                 autocomplete_field:'',
-                version:2,
+                version:3,
                 tree: false,
                 authenticated:false,
                 groups:'',
@@ -267,10 +281,48 @@ export default {
                             "name"
                         ],
                         "where": {
-                            "name:LIKE": "%query%"
+                            "name:LIKE": "%query%",
+                            "org_id":"loc_org_id"
                         },
                         "tpl": "{$name}",
                         "limit": 20
+                    }
+                }
+            }
+        ]
+    },
+    gtsbalance:{
+        name:'gtsbalance',
+        gtsAPITables:[
+            {
+                table:'gtsBPeriod',
+                autocomplete_field:'period_id',
+                version:2,
+                tree: false,
+                authenticated:false,
+                groups:'',
+                permitions:'',
+                active:true,
+                properties: {
+                    actions:{
+                        read:{}
+                    },
+                    autocomplete:{
+                        "select": [
+                            "id",
+                            "label",
+                            "active"
+                        ],
+                        where:{
+                            "label:LIKE":"%query%",
+                        },
+                        query:{
+                            sortby:{
+                                "label":"DESC"
+                            }
+                        },
+                        tpl: "{$label}",
+                        limit:0,
                     }
                 }
             }
@@ -323,6 +375,73 @@ export default {
                         },
                         tpl: "{$fullname}",
                         limit:20,
+                    }
+                }
+            }
+        ]
+    },
+    doc1c:{
+        name:'doc1c',
+        gtsAPITables:[
+            {
+                table:'doc1cBase',
+                autocomplete_field:'base_id',
+                version:2,
+                tree: false,
+                authenticated:false,
+                groups:'',
+                permitions:'',
+                active:true,
+                properties: {
+                    actions:{
+                        read:{},
+                        create:{},
+                        update:{}
+                    },
+                    autocomplete:{
+                        "select": [
+                            "id",
+                            "name"
+                        ],
+                        "where": {
+                            "name:LIKE": "%query%",
+                        },
+                        "tpl": "{$name}",
+                        "limit": 0
+                    },
+                    "fields": {
+                        "id": {
+                            "type": "view",
+                            "class": "doc1cBase"
+                        },
+                        "name": {
+                            "type": "text",
+                            "class": "doc1cBase"
+                        },
+                        "index": {
+                            "type": "text",
+                            "class": "doc1cBase"
+                        },
+                        "prefix": {
+                            "type": "text",
+                            "class": "doc1cBase"
+                        },
+                        "number_length": {
+                            "type": "number",
+                            "class": "doc1cBase"
+                        },
+                        "connection": {
+                            "type": "text",
+                            "class": "doc1cBase"
+                        },
+                        "username": {
+                            "type": "text",
+                            "class": "doc1cBase"
+                        },
+                        "password": {
+                            "type": "text",
+                            "class": "doc1cBase"
+                        }
                     }
                 }
             }

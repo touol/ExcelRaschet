@@ -4,3 +4,4 @@ Changelog for ExcelRaschet.
 - init.
 - Конфиг таблиц.
 - add php class.
+- Конфиг таблиц.
