@@ -1,4 +1,8 @@
 Changelog for ExcelRaschet.
+1.0.7-beta
+==============
+- Первая рабочая версия.
+
 1.0.0-beta
 ==============
 - init.

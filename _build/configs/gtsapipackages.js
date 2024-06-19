@@ -321,6 +321,9 @@ export default {
                                 "label":"DESC"
                             }
                         },
+                        "default_row": {
+                            "active": 1
+                        },
                         tpl: "{$label}",
                         limit:0,
                     }
@@ -441,6 +444,55 @@ export default {
                         "password": {
                             "type": "text",
                             "class": "doc1cBase"
+                        }
+                    }
+                }
+            },
+            {
+                table:'doc1cAccount',
+                autocomplete_field:'',
+                version:1,
+                tree: false,
+                authenticated:false,
+                groups:'',
+                permitions:'',
+                active:true,
+                properties: {
+                    actions:{
+                        read:{},
+                        create:{},
+                        update:{}
+                    },
+                    "fields": {
+                        "id": {
+                            "type": "view",
+                            "class": "doc1cAccount"
+                        },
+                        "base_id": {
+                            "type": "autocomplete",
+                            "table": "doc1cBase",
+                            "class": "doc1cAccount"
+                        },
+                        "period_id": {
+                            "type": "autocomplete",
+                            "table": "gtsBPeriod",
+                            "class": "doc1cAccount"
+                        },
+                        "nomer_1c": {
+                            "type": "number",
+                            "class": "doc1cAccount"
+                        },
+                        "nomer_1c_str": {
+                            "type": "text",
+                            "class": "doc1cAccount"
+                        },
+                        "date_1c": {
+                            "type": "date",
+                            "class": "doc1cAccount"
+                        },
+                        "file": {
+                            "type": "text",
+                            "class": "doc1cAccount"
                         }
                     }
                 }

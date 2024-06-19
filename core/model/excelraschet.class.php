@@ -37,7 +37,8 @@ class ExcelRaschet
         $this->modx->addPackage('excelraschet', MODX_CORE_PATH . 'components/excelraschet/model/');
         $this->modx->lexicon->load('excelraschet:default');
         $this->modx->addPackage('organizations', MODX_CORE_PATH.'components/organizations/model/');
-        // $this->modx->addPackage('gtsbalance', MODX_CORE_PATH.'components/gtsbalance/model/');
+        $this->modx->addPackage('doc1c', MODX_CORE_PATH.'components/doc1c/model/');
+        $this->modx->addPackage('gtsbalance', MODX_CORE_PATH.'components/gtsbalance/model/');
 
         if ($this->pdo = $this->modx->getService('pdoFetch')) {
             $this->pdo->setConfig($this->config);
@@ -58,9 +59,18 @@ class ExcelRaschet
         if($params['type'] == 'after' and $params['method'] == 'read'){
             $out = $params['object_old'];
             $contract_ids = [];
+            $acc_ids = [];
             foreach($out['rows'] as $row){
-                if($row['doc_type_id'] == 1) $contract_ids[$row['doc_id']] = $row['doc_id'];
+                switch($row['doc_type_id']){
+                    case 1: 
+                        $contract_ids[$row['doc_id']] = $row['doc_id'];
+                    break;
+                    case 2: 
+                        $acc_ids[$row['doc_id']] = $row['doc_id'];
+                    break;
+                }
             }
+            $assets_url = MODX_ASSETS_URL;
             if(!empty($contract_ids)){
                 if($OrgsContracts = $this->getQuery([
                     'class'=>'OrgsContract',
@@ -82,13 +92,53 @@ class ExcelRaschet
                 }
                 
             }
+            if(!empty($acc_ids)){
+                if($doc1cAccounts = $this->getQuery([
+                    'class'=>'doc1cAccount',
+                    'where'=>[
+                        'id:IN'=>$acc_ids
+                    ],
+                    'limit'=>0
+                ])){
+                    foreach($out['rows'] as $k=>$row){
+                        if($row['doc_type_id'] == 2){
+                            $out['rows'][$k]['name'] = $doc1cAccounts[$row['doc_id']]['nomer_1c'];
+                            $out['rows'][$k]['date'] = $doc1cAccounts[$row['doc_id']]['date_1c'];
+                            $out['rows'][$k]['file'] = "<a href='{$assets_url}1cfiles/{$doc1cAccounts[$row['doc_id']]['file']}' target='_blank'>{$doc1cAccounts[$row['doc_id']]['file']}</a>";
+                            $out['rows'][$k]['signed'] = '0';// $doc1cAccounts[$row['doc_id']]['signed'];
+                            $out['rows'][$k]['archived'] = '0';// $doc1cAccounts[$row['doc_id']]['archived'];
+                            $out['rows'][$k]['in1c'] = '0';
+                        }
+                    }
+                }
+                
+            }
             // $out['test'] = 1;
         }
         return $this->success('',['out'=>$out]);
     }
     public function createAccountIn1c($data = array())
     {
-        return $this->error("createAccountIn1c!");
+        if(!$doc1c = $this->modx->getService('doc1c','doc1c',MODX_CORE_PATH . 'components/doc1c/model/doc1c/'))
+            return $this->error("Не удалось создать сервис!");
+        $resp = $doc1c->handleRequest('newBillFromRaschet',$data);
+        if(!$resp['success']) return $resp;
+        
+        if(!empty($resp["data"]["date_1c"])) $resp["data"]["date_1c"] = date('Y-m-d',strtotime($resp["data"]["date_1c"]));
+        $acc = $resp["data"];
+        $acc['base_id'] = $data['base_id'];
+        $acc['nomer_1c_str'] = $acc['nomer_1c'];
+        if($doc1cBase = $this->modx->getObject('doc1cBase',$data["base_id"])){
+            $acc['nomer_1c'] = str_replace($doc1cBase->prefix,'',$acc['nomer_1c']);
+            $acc['nomer_1c'] = ltrim($acc['nomer_1c'], '0');
+        }
+        if($gtsBPeriod = $this->modx->getObject('gtsBPeriod',['active'=>1])){
+            $acc['period_id'] = $gtsBPeriod->id;
+        }
+        if($doc1cAccount = $this->modx->newObject('doc1cAccount',$acc)){
+            if($doc1cAccount->save()) return $this->success("",['doc1cAccount'=>$doc1cAccount->toArray()]);
+        }
+        return $this->error("Сервис doc1c!");
     }
     public function handleRequest($action, $data = array())
     {
