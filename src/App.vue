@@ -217,6 +217,7 @@
   })
   const hideDialog = () => {
     createDocDialog.value = false;
+    updateDocDialog.value = false
     // submitted.value = false;
   };
 
