@@ -297,7 +297,7 @@ export default {
             {
                 table:'gtsBPeriod',
                 autocomplete_field:'period_id',
-                version:2,
+                version:3,
                 tree: false,
                 authenticated:false,
                 groups:'',

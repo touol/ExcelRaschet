@@ -1,21 +1,8 @@
 import { defineConfig , loadEnv} from 'vite'
 import vue from '@vitejs/plugin-vue'
-import {parse, resolve, dirname} from 'path'
-import { fileURLToPath } from 'url'
-import external_packages from './_build/external_packages.json' with { "type": "json" }
-import external_pvtables from './node_modules/pvtables/build/external_pvtables.json' with { "type": "json" }
-// import libraries from './node_modules/pvtables/build/libraries.js'
+import { parse, resolve } from 'path'
+import tailwindcss from 'tailwindcss'
 
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = dirname(__filename);
-
-// let aliases = {}
-// for(let key in libraries){
-// //   aliases['pvtables/' + key] = resolve(__dirname, './node_modules/pvtables'+libraries[key].path.replace("../", '/'))
-// //   external_packages.push('pvtables/' + key)
-// }
-// console.log(aliases)
-// https://vitejs.dev/config/
 export default defineConfig(async ({mode})=>{
     process.env = {...process.env,...loadEnv(mode, './')}
     
@@ -39,7 +26,7 @@ export default defineConfig(async ({mode})=>{
             cssCodeSplit: true,
             outDir: process.env.VITE_APP_OUTPUT_DIR,
             rollupOptions: {
-                external: ['vue','primevue', ...external_packages, ...external_pvtables],
+                external: ['vue',/^pvtables.*/],
                 input: {
                     main: resolve(__dirname,'src/main.js')
                 },
@@ -67,9 +54,11 @@ export default defineConfig(async ({mode})=>{
                 }
             }
         },
-        plugins: [vue()],
-        // resolve: {
-        //     alias: aliases
-        // }
+        plugins: [vue(),tailwindcss()],
+        resolve: {
+            alias: {
+                'pvtables/dist/pvtables':'pvtables/src/index'
+            }
+        }
     }
 })

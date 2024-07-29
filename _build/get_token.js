@@ -23,7 +23,7 @@ prompt.get(['username','password'], async function (err, result) {
 
         console.log(res.data)
         if(res.data.token){
-            setEnvValue('DEV_TOKEN', res.data.token)
+            setEnvValue('VITE_DEV_TOKEN', res.data.token)
         }
     }catch (err) {
         error = err;

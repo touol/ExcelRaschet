@@ -4,48 +4,54 @@
     :actions="actions" 
     ref="childComponentRef"
   />
-  <Toast/>
+  
   <Dialog
     v-model:visible="createDocDialog"
-    :style="{ width: '450px' }"
     header="Создать"
-    :modal="true"
-    class="p-fluid"
+    modal
   >
-    <div class="p-field">
-      <label for="doc_type_id">Тип документа</label>
-      <GTSAutocomplete
+    <div class="flex items-center gap-4 mb-4">
+      <label for="doc_type_id" class="font-semibold w-24">Тип документа</label>
+      <gtsAutoComplete
         v-model:id="DocLink.doc_type_id"
         table="DocType"
         @set-value="
           fValidateDocLink(1)
         "
+         class="flex-auto" autocomplete="off"
       />
       <span v-if="!ValidateDocLink.doc_type_id" class="p-error">Это поле требуется.</span>
     </div>
     <template v-if="DocLink.doc_type_id==1">
-      <div class="p-field">
-        <label for="doc_id">Договор</label>
-        <GTSAutocomplete
+      <div class="flex items-center gap-4 mb-4">
+        <label for="doc_id" class="font-semibold w-24">Договор</label>
+        <gtsAutoComplete
           v-model:id="DocLink.doc_id"
           table="OrgsContract"
           :parent="order"
           @set-value="
             fValidateDocLink(2)
           "
+           class="flex-auto" autocomplete="off"
         />
         <span v-if="!ValidateDocLink.doc_id" class="p-error">Это поле требуется.</span>
       </div>
     </template>
     <template v-if="DocLink.doc_type_id==2">
-      <TabView>
-        <TabPanel key="createAccountIn1c" header="Создать счет в 1с">
-          <createAccountIn1c :raschet_id="order.id" @acc-create-on="oncreateAccountIn1c($event)"/>
-        </TabPanel>
-        <TabPanel key="editAccount" header="Создать счет вручную">
-          <editAccount v-model="account"/>
-        </TabPanel>
-      </TabView>
+      <Tabs value="0">
+        <TabList>
+            <Tab value="0">Создать счет в 1с</Tab>
+            <Tab value="1">Создать счет вручную</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel value="0">
+            <createAccountIn1c :raschet_id="order.id" @acc-create-on="oncreateAccountIn1c($event)"/>
+          </TabPanel>
+          <TabPanel value="1">
+            <editAccount v-model="account"/>
+          </TabPanel>
+        </TabPanels>
+      </Tabs> 
     </template>
     <template #footer>
       <Button
@@ -64,32 +70,32 @@
   </Dialog>
   <Dialog
     v-model:visible="updateDocDialog"
-    :style="{ width: '450px' }"
     header="Создать"
-    :modal="true"
-    class="p-fluid"
+    modal
   >
-    <div class="p-field">
-      <label for="doc_type_id">Тип документа</label>
-      <GTSAutocomplete
+    <div class="flex items-center gap-4 mb-4">
+      <label for="doc_type_id" class="font-semibold w-24">Тип документа</label>
+      <gtsAutoComplete
         v-model:id="DocLink.doc_type_id"
         table="DocType"
         @set-value="
           fValidateDocLink(1)
         "
+         class="flex-auto" autocomplete="off"
       />
       <span v-if="!ValidateDocLink.doc_type_id" class="p-error">Это поле требуется.</span>
     </div>
     <template v-if="DocLink.doc_type_id==1">
-      <div class="p-field">
-        <label for="doc_id">Договор</label>
-        <GTSAutocomplete
+      <div class="flex items-center gap-4 mb-4">
+        <label for="doc_id" class="font-semibold w-24">Договор</label>
+        <gtsAutoComplete
           v-model:id="DocLink.doc_id"
           table="OrgsContract"
           :parent="order"
           @set-value="
             fValidateDocLink(2)
           "
+           class="flex-auto" autocomplete="off"
         />
         <span v-if="!ValidateDocLink.doc_id" class="p-error">Это поле требуется.</span>
       </div>
@@ -116,18 +122,9 @@
 
 <script setup>
 
-  import { PVTables } from 'pvtables/pvtables'
+  
   import { ref } from 'vue';
-  import Toast from 'primevue/toast';
-
-  import Button from "primevue/button";
-  import Dialog from "primevue/dialog";
-  import TabView from 'primevue/tabview';
-  import TabPanel from 'primevue/tabpanel';
-
-  import GTSAutocomplete from "pvtables/gtsautocomplete";
-  import apiCtor from 'pvtables/api'
-  import { useNotifications } from "pvtables/notify";
+  import { PVTables, gtsAutoComplete, apiCtor, useNotifications,Button,Dialog,Tabs,TabList,Tab,TabPanels,TabPanel} from 'pvtables/dist/pvtables'
 
   const childComponentRef = ref()
   const createDocDialog = ref(false)
@@ -190,13 +187,13 @@
         click: async (data, columns,table,filters) => {
           
           // console.log('update',data, columns,table,filters)
-          // const order_id = filters.order_id.constraints[0].value
-          // try {
-          //   order.value = await api_sraschet.get(order_id)
-          // } catch (error) {
-          //   notify('error', { detail: error.message });
-          //   return
-          // }
+          const order_id = filters.order_id.constraints[0].value
+          try {
+            order.value = await api_sraschet.get(order_id)
+          } catch (error) {
+            notify('error', { detail: error.message });
+            return
+          }
           DocLink.value = data
           if(DocLink.value.doc_type_id == 2){
             try {
@@ -263,9 +260,15 @@
     return true
   };
   const saveItem = async () => {
-    if(!fValidateDocLink()) return
+    // notify('error', { detail: "Ошибка валидации" });
+    if(!fValidateDocLink()){
+      notify('error', { detail: "Ошибка валидации" });
+      return
+    }
+    
     switch(DocLink.value.doc_type_id){
-      case '1':
+      case 1:
+        console.log('DocLink1',DocLink.value)
         if (DocLink.value.id) {
           try {
             await api.update(DocLink.value)
@@ -277,6 +280,7 @@
           }
         } else {
           try {
+            console.log('DocLink2',DocLink.value)
             await api.create(DocLink.value)
             createDocDialog.value = false;
             updateDocDialog.value = false
@@ -286,7 +290,7 @@
           }
         }
       break
-      case '2':
+      case 2:
         console.log('account',account.value)
         
         if (account.value.id) {

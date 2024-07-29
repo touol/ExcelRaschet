@@ -117,10 +117,17 @@ class ExcelRaschet
         }
         return $this->success('',['out'=>$out]);
     }
-    public function createAccountIn1c($data = array())
+    public function createAccountIn1c($data = [])
     {
         if(!$doc1c = $this->modx->getService('doc1c','doc1c',MODX_CORE_PATH . 'components/doc1c/model/doc1c/'))
             return $this->error("Не удалось создать сервис!");
+            
+        if($data['sokrashen'] == "true"){
+            $data['sokrashen'] = 1;
+        }else{
+            $data['sokrashen'] = 0;
+        }
+        // return $this->error("Сервис doc1c!",$data);
         $resp = $doc1c->handleRequest('newBillFromRaschet',$data);
         if(!$resp['success']) return $resp;
         

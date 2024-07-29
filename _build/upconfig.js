@@ -7,6 +7,7 @@ import snippets from "./configs/snippets.js";
 import settings from "./configs/settings.js";
 import gtsapirules from "./configs/gtsapirules.js"
 import gtsapipackages from "./configs/gtsapipackages.js"
+import data from "./configs/data.js";
 import FormData from 'form-data';
 import 'dotenv/config'
 
@@ -35,7 +36,8 @@ for(let k in snippets){
 form.append('snippets', JSON.stringify(snippets))
 form.append('settings', JSON.stringify(settings))
 form.append('gtsapirules', JSON.stringify(gtsapirules))
-form.append('gtsapipackages', JSON.stringify(gtsapipackages))
+form.append('gtsapipackages', JSON.stringify(gtsapipackages, null, 2))
+form.append('data', JSON.stringify(data, null, 2))
 
 const fileExists = async path => !!(await fs.stat(path).catch(e => false));
 if (await fileExists('./core')) {

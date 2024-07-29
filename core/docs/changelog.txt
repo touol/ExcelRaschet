@@ -2,6 +2,7 @@ Changelog for ExcelRaschet.
 1.0.7-beta
 ==============
 - Первая рабочая версия.
+- Update primevue 4.
 
 1.0.0-beta
 ==============

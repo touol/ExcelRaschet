@@ -1,60 +1,53 @@
 <template>
-  <div class="p-field">
-    <label for="doc_id">База 1с</label>
-    <GTSAutocomplete
+  <div class="flex items-center gap-4 mb-4">
+    <label for="doc_id" class="font-semibold w-24">База 1с</label>
+    <gtsAutoComplete
       v-model:id="model.base_id"
       table="doc1cBase"
+      class="flex-auto" autocomplete="off"
     />
     <!-- <span  class="p-error">Это поле требуется.</span> -->
   </div>
-  <div class="p-field">
-    <label for="doc_id">Период</label>
-    <GTSAutocomplete
+  <div class="flex items-center gap-4 mb-4">
+    <label for="doc_id" class="font-semibold w-24">Период</label>
+    <gtsAutoComplete
       v-model:id="model.period_id"
       table="gtsBPeriod"
       :options="items_gtsBPeriod"
+      class="flex-auto" autocomplete="off"
     />
     <!-- <span  class="p-error">Это поле требуется.</span> -->
   </div>
-  <div class="p-field">
-    <label for="doc_id">Номер счета</label>
+  <div class="flex items-center gap-4 mb-4">
+    <label for="doc_id" class="font-semibold w-24">Номер счета</label>
     <InputText
       v-model="model.nomer_1c"
+      class="flex-auto" autocomplete="off"
     />
     <!-- <span  class="p-error">Это поле требуется.</span> -->
   </div>
-  <div class="p-field">
-    <label for="doc_id">Номер счета полный</label>
+  <div class="flex items-center gap-4 mb-4">
+    <label for="doc_id" class="font-semibold w-24">Номер счета полный</label>
     <InputText
       v-model="model.nomer_1c_str"
+      class="flex-auto" autocomplete="off"
     />
     <!-- <span  class="p-error">Это поле требуется.</span> -->
   </div>
-  <div class="p-field">
-    <label for="doc_id">Дата счета</label>
-    <GTSDate
+  <div class="flex items-center gap-4 mb-4">
+    <label for="doc_id" class="font-semibold w-24">Дата счета</label>
+    <gtsDate
       v-model="model.date_1c"
+      class="flex-auto" autocomplete="off"
     />
     <!-- <span  class="p-error">Это поле требуется.</span> -->
   </div>
 </template>
 <script setup>
   import { ref, onMounted } from "vue";
-  // raschet_id
-  // if($data["sokrashen"] == 1){
-  // if($base = $this->modx->getObject('doc1cBase',['index'=>$data["base_index"]])){
-  import InputText from "primevue/inputtext";
-  // import Button from "primevue/button";
-  // import InputSwitch from "primevue/inputswitch";
+  import { useNotifications, gtsAutoComplete, apiCtor, gtsDate, InputText } from 'pvtables/dist/pvtables';
 
-  import GTSAutocomplete from "pvtables/gtsautocomplete";
-  import GTSDate from "pvtables/gtsdate";
-
-  import apiCtor from 'pvtables/api'
-  // const api_doc1cBase = apiCtor('doc1cBase')
   const api_gtsBPeriod = apiCtor('gtsBPeriod')
-
-  import { useNotifications } from "pvtables/notify";
   const { notify } = useNotifications();
 
   const model = defineModel({
@@ -72,8 +65,8 @@
   onMounted(async () => {
     try {
       const response = await api_gtsBPeriod.autocomplete()
-      items_gtsBPeriod.value = response.data.rows;
-      // console.log('model',model)
+      // items_gtsBPeriod.value = response.data.rows;
+      // console.log('items_gtsBPeriod.value',items_gtsBPeriod.value)
       if(!model.value.period_id) model.value.period_id = response.data.default.toString();
     } catch (error) {
       // console.log('error',error)
