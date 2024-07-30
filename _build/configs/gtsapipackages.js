@@ -499,4 +499,120 @@ export default {
             }
         ]
     },
+    commercial:{
+        name:'commercial',
+        gtsAPITables:[
+            {
+                table:'commercialItem',
+                autocomplete_field:'',
+                version:3,
+                tree: false,
+                authenticated:true,
+                groups:'',
+                permitions:'',
+                active:true,
+                properties: {
+                    actions:{
+                        read:{},
+                        create:{
+                            groups:"Administrator,Менеджеры"
+                        },
+                        update:{
+                            groups:"Administrator,Менеджеры"
+                        }
+                    },
+                    "fields": {
+                        "id": {
+                            "type": "view",
+                            "class": "commercialItem"
+                        },
+                        "raschet_id": {
+                            "label":"№ Расчета",
+                            "type": "number",
+                            "class": "commercialItem"
+                        },
+                        "year_id": {
+                            "label":"Год КП",
+                            "type": "number",
+                            "class": "commercialItem"
+                        },
+                        "period_id": {
+                            "label":"Период",
+                            "type": "autocomplete",
+                            "table": "gtsBPeriod",
+                            "class": "commercialItem"
+                        },
+                        "executor": {
+                            "label":"Исполнитель",
+                            "type": "text",
+                            "class": "commercialItem"
+                        },
+                        "comment": {
+                            "label":"Примечание",
+                            "type": "textarea",
+                            "class": "commercialItem"
+                        },
+                        "createdby": {
+                            "label":"Создан",
+                            "type": "autocomplete",
+                            "table": "Managers",
+                            "class": "sraschet",
+                            "default": "user_id",
+                            "readonly":1,
+                            "class": "commercialItem"
+                        },
+                        "createdon": {
+                            "label":"Дата предложения",
+                            "type": "date",
+                            "default": "now",
+                            "class": "commercialItem"
+                        },
+                        "filename": {
+                            "label":"Файл",
+                            "type": "html",
+                            "tpl":"<a href=\"/assets/docs/commercial/{$filename}\" target=\"_blank\">{$filename}</a>",
+                            "table_only":1,
+                            "class": "commercialItem"
+                        },
+                        "post": {
+                            "label":"Должность руководителя",
+                            "type": "text",
+                            "modal_only":1,
+                            "class": "commercialItem"
+                        },
+                        "fio": {
+                            "label":"Фио руководителя",
+                            "type": "text",
+                            "modal_only":1,
+                            "class": "commercialItem"
+                        },
+                        "org": {
+                            "label":"Организация",
+                            "type": "text",
+                            "modal_only":1,
+                            "class": "commercialItem"
+                        },
+                        "delivery_time": {
+                            "label":"Срок поставки",
+                            "type": "text",
+                            "modal_only":1,
+                            "class": "commercialItem"
+                        },
+                        
+                        "prepayment": {
+                            "label":"Условия оплаты",
+                            "type": "text",
+                            "modal_only":1,
+                            "class": "commercialItem"
+                        },
+                        "sended": {
+                            "label":"Отправлено",
+                            "type": "boolean",
+                            "class": "commercialItem"
+                        },
+                    }
+                }
+            },
+        ]
+    },
 }

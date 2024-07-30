@@ -13,7 +13,7 @@
     <gtsAutoComplete
       v-model:id="model.period_id"
       table="gtsBPeriod"
-      :options="items_gtsBPeriod"
+      :options="options_gtsBPeriod"
       class="flex-auto" autocomplete="off"
     />
     <!-- <span  class="p-error">Это поле требуется.</span> -->
@@ -61,13 +61,13 @@
       file:''
     },
   });
-  const items_gtsBPeriod = ref([])
+  const options_gtsBPeriod = ref({})
   onMounted(async () => {
     try {
       const response = await api_gtsBPeriod.autocomplete()
-      // items_gtsBPeriod.value = response.data.rows;
-      // console.log('items_gtsBPeriod.value',items_gtsBPeriod.value)
-      if(!model.value.period_id) model.value.period_id = response.data.default.toString();
+      options_gtsBPeriod.value = response.data;
+      // // console.log('options_gtsBPeriod.value',options_gtsBPeriod.value)
+      // if(!model.value.period_id) model.value.period_id = response.data.default.toString();
     } catch (error) {
       // console.log('error',error)
       notify('error', { detail: error.message });

@@ -38,6 +38,7 @@ class ExcelRaschet
         $this->modx->lexicon->load('excelraschet:default');
         $this->modx->addPackage('organizations', MODX_CORE_PATH.'components/organizations/model/');
         $this->modx->addPackage('doc1c', MODX_CORE_PATH.'components/doc1c/model/');
+        $this->modx->addPackage('commercial', MODX_CORE_PATH.'components/commercial/model/');
         $this->modx->addPackage('gtsbalance', MODX_CORE_PATH.'components/gtsbalance/model/');
 
         if ($this->pdo = $this->modx->getService('pdoFetch')) {
@@ -60,6 +61,7 @@ class ExcelRaschet
             $out = $params['object_old'];
             $contract_ids = [];
             $acc_ids = [];
+            $commercial_ids = [];
             foreach($out['rows'] as $row){
                 switch($row['doc_type_id']){
                     case 1: 
@@ -67,6 +69,9 @@ class ExcelRaschet
                     break;
                     case 2: 
                         $acc_ids[$row['doc_id']] = $row['doc_id'];
+                    break;
+                    case 3: 
+                        $commercial_ids[$row['doc_id']] = $row['doc_id'];
                     break;
                 }
             }
@@ -105,6 +110,27 @@ class ExcelRaschet
                             $out['rows'][$k]['name'] = $doc1cAccounts[$row['doc_id']]['nomer_1c'];
                             $out['rows'][$k]['date'] = $doc1cAccounts[$row['doc_id']]['date_1c'];
                             $out['rows'][$k]['file'] = "<a href='{$assets_url}1cfiles/{$doc1cAccounts[$row['doc_id']]['file']}' target='_blank'>{$doc1cAccounts[$row['doc_id']]['file']}</a>";
+                            $out['rows'][$k]['signed'] = '0';// $doc1cAccounts[$row['doc_id']]['signed'];
+                            $out['rows'][$k]['archived'] = '0';// $doc1cAccounts[$row['doc_id']]['archived'];
+                            $out['rows'][$k]['in1c'] = '0';
+                        }
+                    }
+                }
+                
+            }
+            if(!empty($commercial_ids)){
+                if($commercialItems = $this->getQuery([
+                    'class'=>'commercialItem',
+                    'where'=>[
+                        'id:IN'=>$commercial_ids
+                    ],
+                    'limit'=>0
+                ])){
+                    foreach($out['rows'] as $k=>$row){
+                        if($row['doc_type_id'] == 3){
+                            $out['rows'][$k]['name'] = 'КП №'.$commercialItems[$row['doc_id']]['year_id'];
+                            $out['rows'][$k]['date'] = $commercialItems[$row['doc_id']]['createdon'];
+                            $out['rows'][$k]['file'] = "<a href='{$assets_url}docs/commercial/{$commercialItems[$row['doc_id']]['filename']}' target='_blank'>{$commercialItems[$row['doc_id']]['filename']}</a>";
                             $out['rows'][$k]['signed'] = '0';// $doc1cAccounts[$row['doc_id']]['signed'];
                             $out['rows'][$k]['archived'] = '0';// $doc1cAccounts[$row['doc_id']]['archived'];
                             $out['rows'][$k]['in1c'] = '0';
