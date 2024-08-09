@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@primevue/themes": "^4.0.1",
-    "axios": "^1.6.2",
     "primeicons": "^7.0.0",
     "primevue": "^4.0.1",
     "pvtables": "^0.0.7",

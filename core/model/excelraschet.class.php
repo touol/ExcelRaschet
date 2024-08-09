@@ -40,6 +40,7 @@ class ExcelRaschet
         $this->modx->addPackage('doc1c', MODX_CORE_PATH.'components/doc1c/model/');
         $this->modx->addPackage('commercial', MODX_CORE_PATH.'components/commercial/model/');
         $this->modx->addPackage('gtsbalance', MODX_CORE_PATH.'components/gtsbalance/model/');
+        $this->modx->addPackage('specification', MODX_CORE_PATH.'components/specification/model/');
 
         if ($this->pdo = $this->modx->getService('pdoFetch')) {
             $this->pdo->setConfig($this->config);
@@ -62,6 +63,7 @@ class ExcelRaschet
             $contract_ids = [];
             $acc_ids = [];
             $commercial_ids = [];
+            $spec_ids = [];
             foreach($out['rows'] as $row){
                 switch($row['doc_type_id']){
                     case 1: 
@@ -72,6 +74,9 @@ class ExcelRaschet
                     break;
                     case 3: 
                         $commercial_ids[$row['doc_id']] = $row['doc_id'];
+                    break;
+                    case 4: 
+                        $spec_ids[$row['doc_id']] = $row['doc_id'];
                     break;
                 }
             }
@@ -133,6 +138,27 @@ class ExcelRaschet
                             $out['rows'][$k]['file'] = "<a href='{$assets_url}docs/commercial/{$commercialItems[$row['doc_id']]['filename']}' target='_blank'>{$commercialItems[$row['doc_id']]['filename']}</a>";
                             $out['rows'][$k]['signed'] = '0';// $doc1cAccounts[$row['doc_id']]['signed'];
                             $out['rows'][$k]['archived'] = '0';// $doc1cAccounts[$row['doc_id']]['archived'];
+                            $out['rows'][$k]['in1c'] = '0';
+                        }
+                    }
+                }
+                
+            }
+            if(!empty($spec_ids)){
+                if($Specs = $this->getQuery([
+                    'class'=>'Spec',
+                    'where'=>[
+                        'id:IN'=>$spec_ids
+                    ],
+                    'limit'=>0
+                ])){
+                    foreach($out['rows'] as $k=>$row){
+                        if($row['doc_type_id'] == 4){
+                            $out['rows'][$k]['name'] = 'КП №'.$Specs[$row['doc_id']]['spec_id'];
+                            $out['rows'][$k]['date'] = $Specs[$row['doc_id']]['date'];
+                            $out['rows'][$k]['file'] = "<a href='{$assets_url}docs/spec/{$Specs[$row['doc_id']]['file']}' target='_blank'>{$Specs[$row['doc_id']]['file']}</a>";
+                            $out['rows'][$k]['signed'] = $Specs[$row['doc_id']]['signed'];
+                            $out['rows'][$k]['archived'] = $Specs[$row['doc_id']]['archived'];
                             $out['rows'][$k]['in1c'] = '0';
                         }
                     }
