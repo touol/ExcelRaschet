@@ -151,7 +151,7 @@
   const api_sraschet = apiCtor('sraschet')
   const api_doc1cAccount = apiCtor('doc1cAccount')
   const api_commercialItem = apiCtor('commercialItem')
-  const api_SpecItem = apiCtor('Spec')
+  const api_SpecItem = apiCtor('Spec',300000)
 
   const { notify } = useNotifications();
   

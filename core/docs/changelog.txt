@@ -5,6 +5,7 @@ Changelog for ExcelRaschet.
 - Update primevue 4.
 - Коммерческое.
 - Спецификации.
+- Таймаут.
 
 1.0.0-beta
 ==============
